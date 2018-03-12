@@ -12,5 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+	return view('index');
 });
+
+Route::get('/pencarian-hadits', 'PencarianHaditsController@pencarianHadits');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
