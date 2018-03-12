@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Html\Builder;
 use Yajra\Datatables\Datatables;
 
+
 class PencarianHaditsController extends Controller
 {
 	public function pencarianHadits(Request $request){
@@ -24,7 +25,7 @@ class PencarianHaditsController extends Controller
 			$keyword_kelima = $pisah_kata[0];
 			$keyword_keenam = $pisah_kata[2];
 
-			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits')->where(function($query) use ($request){
+			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits','Isi_Arab')->where(function($query) use ($request){
 				$query->Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')
 				->where(function($query) use ($request){
 					$query->orWhere('tipe_hadits',$request->abudaud)
@@ -97,7 +98,7 @@ class PencarianHaditsController extends Controller
 			$keyword_pertama = $pisah_kata[0];
 			$keyword_kedua = $pisah_kata[1];
 
-			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits')->where(function($query) use ($request){
+			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits','Isi_Arab')->where(function($query) use ($request){
 				$query->Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')
 				->where(function($query) use ($request){
 					$query->orWhere('tipe_hadits',$request->abudaud)
@@ -131,7 +132,16 @@ class PencarianHaditsController extends Controller
 
 		}else if ($jumlah_kata == 1) {
 
-			$kumpulan_hadits = KumpulanHadits::Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')->where(function($query) use ($request){
+			$kumpulan_hadits = KumpulanHadits::Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')
+			->where(function($query) use ($request){
+				$query->orWhere('tipe_hadits',$request->abudaud)
+				->orWhere('tipe_hadits',$request->bukhari)
+				->orWhere('tipe_hadits',$request->malik)
+				->orWhere('tipe_hadits',$request->ahmad);
+			});
+		}else if (is_numeric($request->search)) {
+			$kumpulan_hadits = KumpulanHadits::Where('NoHdt', $request->search)
+			->where(function($query) use ($request){
 				$query->orWhere('tipe_hadits',$request->abudaud)
 				->orWhere('tipe_hadits',$request->bukhari)
 				->orWhere('tipe_hadits',$request->malik)
@@ -139,8 +149,11 @@ class PencarianHaditsController extends Controller
 			});
 		}
 
-		
-		return Datatables::of($kumpulan_hadits)->editColumn('tipe_hadits', function ($kumpulan_hadits){
+		return Datatables::of($kumpulan_hadits)
+		->addColumn('isi_hadits', function ($kumpulan_hadits){
+			return $kumpulan_hadits->Isi_Arab."<br>".$kumpulan_hadits->Isi_Indonesia;
+		})
+		->editColumn('tipe_hadits', function ($kumpulan_hadits){
 			if ($kumpulan_hadits->tipe_hadits == 1) {
 				return "Abu Daud";
 			}else if ($kumpulan_hadits->tipe_hadits == 2) {
