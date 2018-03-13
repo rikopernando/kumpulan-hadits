@@ -22,20 +22,6 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}"> <!-- Resource style -->
 
 </head>
-<style type="text/css">
-.searchForm{
-    /* The search form. */
-    background-color:#4C5A65;
-    padding:20px 20px 30px;
-    margin:40px 0;
-    position:relative;
-    color: #fff;
-
-    -moz-border-radius:16px;
-    -webkit-border-radius:16px;
-    border-radius:16px;
-}
-</style>
 <body>
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
@@ -59,7 +45,7 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li><a href="#">Cari Hadits</a></li> 
+                        <li><a href="{{ url('/') }}">Cari Hadits</a></li> 
 
                     </ul>
 
@@ -93,9 +79,7 @@
         </div>
     </nav>
 
-    <main class="py-4">
-        @yield('content')
-    </main>
+    @yield('content')
 </div>
 
 <!-- Scripts -->

@@ -149,11 +149,23 @@ class PencarianHaditsController extends Controller
 			});
 		}
 
-		return Datatables::of($kumpulan_hadits)
-		->addColumn('isi_hadits', function ($kumpulan_hadits){
-			return $kumpulan_hadits->Isi_Arab."<br>".$kumpulan_hadits->Isi_Indonesia;
+		return Datatables::of($kumpulan_hadits)->addColumn('action', function ($kumpulan_hadits) use ($jumlah_kata,$request){
+			// if ($jumlah_kata >= 3) {
+
+				// $Isi_Indonesia = $kumpulan_hadits->Isi_Indonesia;
+				// $pisah_kata = explode(" ", $request->search);
+				// $block_keyword_pertama = "<b>".$pisah_kata[0]."</b>";
+				// $block_keyword_kedua = "<b>".$pisah_kata[1]."</b>";
+				// $block_keyword_ketiga = "<b>".$pisah_kata[2]."</b>";
+				// $Isi_Indonesia = str_replace($pisah_kata[0], $block_keyword_pertama , $Isi_Indonesia);
+				// $Isi_Indonesia = str_replace($pisah_kata[1], $block_keyword_kedua ,$Isi_Indonesia);
+				// $Isi_Indonesia = str_replace($pisah_kata[2], $block_keyword_ketiga ,$Isi_Indonesia);
+				// return $kumpulan_hadits->Isi_Arab."<br>".$Isi_Indonesia;
+			// }else{
+			// }
+			return $kumpulan_hadits->Isi_Arab."<br><br>".$kumpulan_hadits->Isi_Indonesia;	
 		})
-		->editColumn('tipe_hadits', function ($kumpulan_hadits){
+		->addColumn('tipe_hadits', function ($kumpulan_hadits){
 			if ($kumpulan_hadits->tipe_hadits == 1) {
 				return "Abu Daud";
 			}else if ($kumpulan_hadits->tipe_hadits == 2) {
