@@ -42,9 +42,9 @@
    <table class="table table-bordered" id="table-hadits">
     <thead>
         <tr>
-            <th>No. Hadits</th>
-            <th>Isi Hadits</th>
-            <th>Tipe hadits</th>
+            <th>No. Hadis</th>
+            <th>Isi Hadis</th>
+            <th>Tipe Hadis</th>
         </tr>
     </thead>
 </table>

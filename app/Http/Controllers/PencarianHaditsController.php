@@ -13,6 +13,7 @@ class PencarianHaditsController extends Controller
 {
 	public function pencarianHadits(Request $request){
 		$search = $request->search;
+		$search = title_case($search);
 		$jumlah_kata = str_word_count($search);	
 		$pisah_kata = explode(" ", $search);
 
@@ -150,22 +151,28 @@ class PencarianHaditsController extends Controller
 		}
 
 		return Datatables::of($kumpulan_hadits)->addColumn('action', function ($kumpulan_hadits) use ($jumlah_kata,$request){
-			// if ($jumlah_kata >= 3) {
+			// JIKA JUMLAH KATA SAMA DENGAN 3 ATAU LEBIH
 
-				// $Isi_Indonesia = $kumpulan_hadits->Isi_Indonesia;
-				// $pisah_kata = explode(" ", $request->search);
-				// $block_keyword_pertama = "<b>".$pisah_kata[0]."</b>";
-				// $block_keyword_kedua = "<b>".$pisah_kata[1]."</b>";
-				// $block_keyword_ketiga = "<b>".$pisah_kata[2]."</b>";
-				// $Isi_Indonesia = str_replace($pisah_kata[0], $block_keyword_pertama , $Isi_Indonesia);
-				// $Isi_Indonesia = str_replace($pisah_kata[1], $block_keyword_kedua ,$Isi_Indonesia);
-				// $Isi_Indonesia = str_replace($pisah_kata[2], $block_keyword_ketiga ,$Isi_Indonesia);
-				// return $kumpulan_hadits->Isi_Arab."<br>".$Isi_Indonesia;
-			// }else{
-			// }
-			return $kumpulan_hadits->Isi_Arab."<br><br>".$kumpulan_hadits->Isi_Indonesia;	
-		})
-		->addColumn('tipe_hadits', function ($kumpulan_hadits){
+			$Isi_Indonesia = $kumpulan_hadits->Isi_Indonesia;
+			if ($jumlah_kata >= 3) { 
+
+				$terjemahanHadisKeIndonesia = $this->blockTigaJumlahKata($Isi_Indonesia,$request->search);
+
+				return $kumpulan_hadits->Isi_Arab."<br><br>".$terjemahanHadisKeIndonesia;
+				// tampilkan text arab hadis serta arti hadis
+			}else if($jumlah_kata == 2){
+
+				$terjemahanHadisKeIndonesia = $this->blockDuaJumlahKata($Isi_Indonesia,$request->search);
+
+				return $kumpulan_hadits->Isi_Arab."<br><br>".$terjemahanHadisKeIndonesia;
+				// tampilkan text arab hadis serta arti hadis
+			}else{				
+				$terjemahanHadisKeIndonesia = $this->blockSatuJumlahKata($Isi_Indonesia,$request->search);
+
+				return $kumpulan_hadits->Isi_Arab."<br><br>".$terjemahanHadisKeIndonesia;
+				// tampilkan text arab hadis serta arti hadis
+			}
+		})->addColumn('tipe_hadits', function ($kumpulan_hadits){
 			if ($kumpulan_hadits->tipe_hadits == 1) {
 				return "Abu Daud";
 			}else if ($kumpulan_hadits->tipe_hadits == 2) {
@@ -178,4 +185,98 @@ class PencarianHaditsController extends Controller
 		})->make(true);
 	}
 
+	public function blockTigaJumlahKata($Isi_Indonesia,$search){			
+		$pisah_kata = explode(" ", $search);// PISAHKAN KATA
+							// fungsi strtolower akan membuat kata atau keyword menjadi huruf kecil semua
+		$keyword_pertama_dengan_huruf_kecil = strtolower($pisah_kata[0]);
+		$keyword_kedua_dengan_huruf_kecil = strtolower($pisah_kata[1]);
+		$keyword_ketiga_dengan_huruf_kecil = strtolower($pisah_kata[2]);
+
+					// fungsi title_case untul Mengubah Huruf Pertama Awal keyword menjadi hruf besar
+		$keyword_pertama_dengan_huruf_awal_kata_kapital = title_case($pisah_kata[0]);
+		$keyword_kedua_dengan_huruf_awal_kata_kapital = title_case($pisah_kata[1]);
+		$keyword_ketiga_dengan_huruf_awal_kata_kapital = title_case($pisah_kata[2]);
+
+
+		$block_keyword_pertama_huruf_kecil = "<b style='color:red'>".$keyword_pertama_dengan_huruf_kecil."</b>";
+				// KATA PERTAMA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_kedua_huruf_kecil = "<b style='color:red'>".$keyword_kedua_dengan_huruf_kecil."</b>";
+				// KATA KEDUA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_ketiga_huruf_kecil = "<b style='color:red'>".$keyword_ketiga_dengan_huruf_kecil."</b>";
+				// KATA KETIGA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+
+		$block_keyword_pertama_Awal_kata_huruf_Kapital = "<b style='color:red'>".$keyword_pertama_dengan_huruf_awal_kata_kapital."</b>";
+				// KATA PERTAMA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_kedua_Awal_kata_huruf_Kapital = "<b style='color:red'>".$keyword_kedua_dengan_huruf_awal_kata_kapital."</b>";
+				// KATA KEDUA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_ketiga_Awal_kata_huruf_Kapital = "<b style='color:red'>".$keyword_ketiga_dengan_huruf_awal_kata_kapital."</b>";
+				// KATA KETIGA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+
+		$Isi_Indonesia = str_replace($keyword_pertama_dengan_huruf_kecil, $block_keyword_pertama_huruf_kecil , $Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_kedua_dengan_huruf_kecil, $block_keyword_kedua_huruf_kecil ,$Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata kedua di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_ketiga_dengan_huruf_kecil, $block_keyword_ketiga_huruf_kecil ,$Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata ketiga di replcae dengan variable $block_keyword_pertama
+
+		$Isi_Indonesia = str_replace($keyword_pertama_dengan_huruf_awal_kata_kapital, $block_keyword_pertama_Awal_kata_huruf_Kapital , $Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_kedua_dengan_huruf_awal_kata_kapital, $block_keyword_kedua_Awal_kata_huruf_Kapital ,$Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata kedua di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_ketiga_dengan_huruf_awal_kata_kapital, $block_keyword_ketiga_Awal_kata_huruf_Kapital ,$Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata ketiga di replcae dengan variable $block_keyword_pertama
+		return $Isi_Indonesia;
+	}
+
+	public function blockDuaJumlahKata($Isi_Indonesia,$search){			
+		$pisah_kata = explode(" ", $search);// PISAHKAN KATA
+							// fungsi strtolower akan membuat kata atau keyword menjadi huruf kecil semua
+		$keyword_pertama_dengan_huruf_kecil = strtolower($pisah_kata[0]);
+		$keyword_kedua_dengan_huruf_kecil = strtolower($pisah_kata[1]);
+
+					// fungsi title_case untul Mengubah Huruf Pertama Awal keyword menjadi hruf besar
+		$keyword_pertama_dengan_huruf_awal_kata_kapital = title_case($pisah_kata[0]);
+		$keyword_kedua_dengan_huruf_awal_kata_kapital = title_case($pisah_kata[1]);
+
+
+		$block_keyword_pertama_huruf_kecil = "<b style='color:red'>".$keyword_pertama_dengan_huruf_kecil."</b>";
+				// KATA PERTAMA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_kedua_huruf_kecil = "<b style='color:red'>".$keyword_kedua_dengan_huruf_kecil."</b>";
+				// KATA KEDUA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+
+		$block_keyword_pertama_Awal_kata_huruf_Kapital = "<b style='color:red'>".$keyword_pertama_dengan_huruf_awal_kata_kapital."</b>";
+				// KATA PERTAMA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_kedua_Awal_kata_huruf_Kapital = "<b style='color:red'>".$keyword_kedua_dengan_huruf_awal_kata_kapital."</b>";
+				// KATA KEDUA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+
+		$Isi_Indonesia = str_replace($keyword_pertama_dengan_huruf_kecil, $block_keyword_pertama_huruf_kecil , $Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_kedua_dengan_huruf_kecil, $block_keyword_kedua_huruf_kecil ,$Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata kedua di replcae dengan variable $block_keyword_pertama
+
+		$Isi_Indonesia = str_replace($keyword_pertama_dengan_huruf_awal_kata_kapital, $block_keyword_pertama_Awal_kata_huruf_Kapital , $Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_kedua_dengan_huruf_awal_kata_kapital, $block_keyword_kedua_Awal_kata_huruf_Kapital ,$Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata kedua di replcae dengan variable $block_keyword_pertama
+		return $Isi_Indonesia;
+	}
+
+	public function blockSatuJumlahKata($Isi_Indonesia,$search){			
+							// fungsi strtolower akan membuat kata atau keyword menjadi huruf kecil semua
+		$keyword_pertama_dengan_huruf_kecil = strtolower($search);
+
+					// fungsi title_case untul Mengubah Huruf Pertama Awal keyword menjadi hruf besar
+		$keyword_pertama_dengan_huruf_awal_kata_kapital = title_case($search);
+
+		$block_keyword_pertama_huruf_kecil = "<b style='color:red'>".$keyword_pertama_dengan_huruf_kecil."</b>";
+				// KATA PERTAMA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+		$block_keyword_pertama_Awal_kata_huruf_Kapital = "<b style='color:red'>".$keyword_pertama_dengan_huruf_awal_kata_kapital."</b>";
+				// KATA PERTAMA DI BLOCK ATAU DI TEBALKAN DAN DIBERI WARNA MERAH
+
+		$Isi_Indonesia = str_replace($keyword_pertama_dengan_huruf_kecil, $block_keyword_pertama_huruf_kecil , $Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
+		$Isi_Indonesia = str_replace($keyword_pertama_dengan_huruf_awal_kata_kapital, $block_keyword_pertama_Awal_kata_huruf_Kapital , $Isi_Indonesia);
+				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
+		return $Isi_Indonesia;
+	}
 }
