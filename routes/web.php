@@ -14,6 +14,12 @@
 Route::get('/', function () {
 	return view('index');
 });
+Route::get('/help', function () {
+	return view('help');
+});
+Route::get('/about', function () {
+	return view('about');
+});
 
 Route::get('/pencarian-hadits', 'PencarianHaditsController@pencarianHadits');
 

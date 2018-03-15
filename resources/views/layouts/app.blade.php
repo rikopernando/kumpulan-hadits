@@ -7,8 +7,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>Kumpulan Hadits</title>
+    <link href="{{ asset('image/kumpulanhadis.png') }}" rel="icon" type="image/png"/>
+    <title>Kumpulan Hadis</title>
 
     <!-- Styles --> 
     <link href="{{ asset('css/font-awesome.min.css') }}" rel='stylesheet' type='text/css'>
@@ -38,14 +38,16 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        Kumpulan Hadits
+                        Kumpulan Hadis
                     </a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li><a href="{{ url('/') }}">Cari Hadits</a></li> 
+                        <li><a href="{{ url('/') }}">Cari Hadis</a></li> 
+                        <li><a href="{{ url('/help') }}">Help</a></li> 
+                        <li><a href="{{ url('/about') }}">About</a></li> 
 
                     </ul>
 
