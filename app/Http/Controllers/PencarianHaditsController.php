@@ -12,7 +12,9 @@ use Yajra\Datatables\Datatables;
 class PencarianHaditsController extends Controller
 {
 	public function pencarianHadits(Request $request){
+
 		$search = $request->search;
+		$search = $this->menghilangkanKarakter($search);// TOKENIZING
 		$search = title_case($search);
 		$jumlah_kata = str_word_count($search);	
 		$pisah_kata = explode(" ", $search);
@@ -26,8 +28,8 @@ class PencarianHaditsController extends Controller
 			$keyword_kelima = $pisah_kata[0];
 			$keyword_keenam = $pisah_kata[2];
 
-			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits','Isi_Arab')->where(function($query) use ($request){
-				$query->Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')
+			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits','Isi_Arab')->where(function($query) use ($search,$request){
+				$query->Where('Isi_Indonesia', 'LIKE', '%'.$search . '%')
 				->where(function($query) use ($request){
 					$query->orWhere('tipe_hadits',$request->abudaud)
 					->orWhere('tipe_hadits',$request->bukhari)
@@ -84,7 +86,7 @@ class PencarianHaditsController extends Controller
 				});
 			})->orderByRaw(
 				'CASE
-				when Isi_Indonesia LIKE "%'.$request->search.'%" then 1 
+				when Isi_Indonesia LIKE "%'.$search.'%" then 1 
 				when Isi_Indonesia LIKE "%'.$keyword_pertama.'%" then 2 
 				when Isi_Indonesia LIKE "%'.$keyword_kedua.'%" then 3 
 				when Isi_Indonesia LIKE "%'.$keyword_ketiga.'%" then 4 
@@ -99,8 +101,8 @@ class PencarianHaditsController extends Controller
 			$keyword_pertama = $pisah_kata[0];
 			$keyword_kedua = $pisah_kata[1];
 
-			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits','Isi_Arab')->where(function($query) use ($request){
-				$query->Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')
+			$kumpulan_hadits = KumpulanHadits::select('NoHdt','Isi_Indonesia','tipe_hadits','Isi_Arab')->where(function($query) use ($search,$request){
+				$query->Where('Isi_Indonesia', 'LIKE', '%'.$search . '%')
 				->where(function($query) use ($request){
 					$query->orWhere('tipe_hadits',$request->abudaud)
 					->orWhere('tipe_hadits',$request->bukhari)
@@ -125,7 +127,7 @@ class PencarianHaditsController extends Controller
 				});
 			})->orderByRaw(
 				'CASE
-				when Isi_Indonesia LIKE "%'.$request->search.'%" then 1 
+				when Isi_Indonesia LIKE "%'.$search.'%" then 1 
 				when Isi_Indonesia LIKE "%'.$keyword_pertama.'%" then 2 
 				when Isi_Indonesia LIKE "%'.$keyword_kedua.'%" then 3 
 				END'
@@ -133,15 +135,15 @@ class PencarianHaditsController extends Controller
 
 		}else if ($jumlah_kata == 1) {
 
-			$kumpulan_hadits = KumpulanHadits::Where('Isi_Indonesia', 'LIKE', '%'.$request->search . '%')
+			$kumpulan_hadits = KumpulanHadits::Where('Isi_Indonesia', 'LIKE', '%'.$search . '%')
 			->where(function($query) use ($request){
 				$query->orWhere('tipe_hadits',$request->abudaud)
 				->orWhere('tipe_hadits',$request->bukhari)
 				->orWhere('tipe_hadits',$request->malik)
 				->orWhere('tipe_hadits',$request->ahmad);
 			});
-		}else if (is_numeric($request->search)) {
-			$kumpulan_hadits = KumpulanHadits::Where('NoHdt', $request->search)
+		}else if (is_numeric($search) OR $search == '') {
+			$kumpulan_hadits = KumpulanHadits::Where('NoHdt', $search)
 			->where(function($query) use ($request){
 				$query->orWhere('tipe_hadits',$request->abudaud)
 				->orWhere('tipe_hadits',$request->bukhari)
@@ -150,37 +152,37 @@ class PencarianHaditsController extends Controller
 			});
 		}
 
-		return Datatables::of($kumpulan_hadits)->addColumn('action', function ($kumpulan_hadits) use ($jumlah_kata,$request){
+		return Datatables::of($kumpulan_hadits)->addColumn('action', function ($kumpulan_hadits) use ($jumlah_kata,$request,$search){
 			// JIKA JUMLAH KATA SAMA DENGAN 3 ATAU LEBIH
 
 			$Isi_Indonesia = $kumpulan_hadits->Isi_Indonesia;
 			if ($jumlah_kata >= 3) { 
 
-				$terjemahanHadisKeIndonesia = $this->blockTigaJumlahKata($Isi_Indonesia,$request->search);
+				$terjemahanHadisKeIndonesia = $this->blockTigaJumlahKata($Isi_Indonesia,$search);
 
 				return $kumpulan_hadits->Isi_Arab."<br><br>".$terjemahanHadisKeIndonesia;
 				// tampilkan text arab hadis serta arti hadis
 			}else if($jumlah_kata == 2){
 
-				$terjemahanHadisKeIndonesia = $this->blockDuaJumlahKata($Isi_Indonesia,$request->search);
+				$terjemahanHadisKeIndonesia = $this->blockDuaJumlahKata($Isi_Indonesia,$search);
 
 				return $kumpulan_hadits->Isi_Arab."<br><br>".$terjemahanHadisKeIndonesia;
 				// tampilkan text arab hadis serta arti hadis
 			}else{				
-				$terjemahanHadisKeIndonesia = $this->blockSatuJumlahKata($Isi_Indonesia,$request->search);
+				$terjemahanHadisKeIndonesia = $this->blockSatuJumlahKata($Isi_Indonesia,$search);
 
 				return $kumpulan_hadits->Isi_Arab."<br><br>".$terjemahanHadisKeIndonesia;
-				// tampilkan text arab hadis serta arti hadis
+				// tampilkan text arab hadis serta arti hadisuse 
 			}
-		})->addColumn('tipe_hadits', function ($kumpulan_hadits){
-			if ($kumpulan_hadits->tipe_hadits == 1) {
-				return "Abu Daud";
-			}else if ($kumpulan_hadits->tipe_hadits == 2) {
-				return "Bukhari";
-			}else if ($kumpulan_hadits->tipe_hadits == 3) {
-				return "Malik";
-			}else if ($kumpulan_hadits->tipe_hadits == 4) {
-				return "Ahmad";
+		})->addColumn('tipe_hadits', function ($kumpulan_hadits) use ($search){
+			if ($kumpulan_hadits->tipe_hadits == 1) { 
+
+				return "Abu Daud"; 
+			}else if ($kumpulan_hadits->tipe_hadits == 2) { 
+				return "Bukhari"; 
+			}else if ($kumpulan_hadits->tipe_hadits == 3) { 
+				return "Malik"; 
+			}else if ($kumpulan_hadits->tipe_hadits == 4) { 
 			}
 		})->make(true);
 	}
@@ -279,4 +281,22 @@ class PencarianHaditsController extends Controller
 				// arti hadis yang katanya mirip dengan kata pertama di replcae dengan variable $block_keyword_pertama
 		return $Isi_Indonesia;
 	}
+
+	public function menghilangkanKarakter($search){
+		// FUNGSI INI BERFUNGSI UNTUK MENGHILANGKAN KARAKTER-KARAKTER TERTENTU SEPERTI DIGIT, ANGKA, TANDA HUBUNG DAN TANDA BACA
+		if (is_numeric($search)) {
+
+		}else{
+
+		 $hapusSemuaKarakterKecualiSpasi = preg_replace('/[^A-Za-z0-9\ ]/', '', $search); // MENGHAPUS SEMUA KARAKTER KECUALI KARAKTER n (DITENTUKAN), DISNI KARAKTER YANG TIDAK DIHAPUS ADALAH SPASI
+
+
+		 $hapusSemuaAngka = preg_replace('/\d/', '', $hapusSemuaKarakterKecualiSpasi);
+		 $search = $hapusSemuaAngka;
+		}
+		
+
+		return $search;
+	}
+
 }
