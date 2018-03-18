@@ -14,6 +14,7 @@ class PencarianHaditsController extends Controller
 	public function pencarianHadits(Request $request){
 
 		$search = $request->search;
+		$search = $this->stopwordRemoval($search); /// stopwordRemoval
 		$search = $this->menghilangkanKarakter($search);// TOKENIZING
 		$search = title_case($search);
 		$jumlah_kata = str_word_count($search);	
@@ -298,5 +299,12 @@ class PencarianHaditsController extends Controller
 
 		return $search;
 	}
+	public function stopwordRemoval($search){
+
+		$stopwordRemoval = array('yang', 'di', 'dan', 'itu', 'dengan', 'untuk', 'tidak', 'ini', 'dari', 'dalam', 'akan', 'pada', 'juga', 'saya', 'ke', 'karena', 'tersebut', 'bisa', 'ada', 'mereka', 'kata', 'sudah', 'atau', 'saat', 'oleh', 'menjadi', 'ia', 'telah', 'adalah', 'seperti', 'sebagai', 'bahwa', 'dapat', 'para', 'harus', 'namun', 'kita', 'masih', 'hanya', 'mengatakan', 'kepada', 'kami', 'setelah', 'melakukan', 'lalu', 'belum', 'lain', 'dia', 'kalau', 'terjadi', 'menurut', 'anda', 'hingga', 'tak', 'baru', 'beberapa', 'ketika', 'saja', 'jalan', 'sekitar', 'secara', 'dilakukan', 'sementara', 'tapi', 'sangat', 'hal', 'sehingga', 'seorang', 'bagi', 'besar', 'lagi', 'selama', 'antara', 'sebuah', 'jika', 'sampai', 'jadi', 'terhadap', 'serta', 'pun', 'salah', 'merupakan', 'atas', 'sejak', 'membuat', 'baik', 'memiliki', 'kembali', 'selain', 'tetapi', 'memang', 'pernah', 'apa', 'mulai', 'sama', 'tentang', 'bukan', 'agar', 'semua', 'sedang', 'kali', 'kemudian', 'hasil', 'sejumlah', 'juta', 'persen', 'sendiri', 'katanya', 'demikian', 'masalah', 'mungkin', 'umum', 'setiap', 'bagian', 'bila', 'lainnya', 'terus', 'luar', 'cukup', 'termasuk', 'sebelumnya', 'bahkan', 'wib', 'tempat', 'perlu', 'menggunakan', 'memberikan', 'sedangkan', 'langsung', 'apakah', 'pihak', 'melalui', 'diri', 'mencapai', 'aku', 'berada', 'tinggi', 'ingin', 'sebelum', 'tengah', 'kini', 'tahu', 'bersama', 'depan', 'begitu', 'merasa', 'berbagai', 'mengenai', 'maka', 'jumlah', 'masuk', 'katanya', 'mengalami', 'sering', 'ujar', 'kondisi', 'akibat', 'paling', 'mendapatkan', 'selalu', 'lima', 'meminta', 'melihat', 'sekarang', 'mengaku', 'mau', 'acara', 'menyatakan', 'proses', 'tanpa', 'sempat', 'adanya', 'maupun', 'seluruh', 'mantan', 'lama', 'jenis', 'segera', 'misalnya', 'mendapat', 'bawah', 'jangan', 'meski', 'terlihat', 'akhirnya', 'punya', 'yakni', 'terakhir', 'kecil', 'panjang', 'badan', 'juni', 'of', 'jelas', 'jauh', 'tentu', 'semakin', 'tinggal', 'kurang', 'mampu', 'posisi', 'asal', 'sekali', 'sesuai', 'sebesar', 'berat', 'dirinya', 'memberi', 'pagi', 'sabtu', 'ternyata', 'mencari', 'sumber', 'ruang', 'menunjukkan', 'biasanya', 'nama', 'sebanyak', 'utara', 'berlangsung', 'barat', 'kemungkinan', 'yaitu', 'berdasarkan', 'sebenarnya', 'cara', 'utama', 'pekan', 'terlalu', 'membawa', 'kebutuhan', 'suatu', 'menerima', 'penting', 'tanggal', 'bagaimana', 'terutama', 'tingkat', 'awal', 'sedikit', 'nanti', 'pasti', 'muncul', 'dekat', 'lanjut', 'biasa', 'dulu', 'kesempatan', 'ribu', 'akhir', 'membantu', 'terkait', 'sebab', 'menyebabkan', 'khusus', 'bentuk', 'ditemukan', 'diduga', 'mana', 'ya', 'kegiatan', 'sebagian', 'tampil', 'hampir', 'bertemu', 'usai', 'berarti', 'keluar', 'pula', 'digunakan', 'justru', 'padahal', 'menyebutkan', 'gedung', 'apalagi', 'program', 'milik', 'teman', 'menjalani', 'keputusan', 'sumber', 'upaya', 'mengetahui', 'mempunyai', 'berjalan', 'menjelaskan', 'mengambil', 'benar', 'lewat', 'belakang', 'ikut', 'barang', 'meningkatkan', 'kejadian', 'kehidupan', 'keterangan', 'penggunaan', 'masing-masing', 'menghadapi');
+
+		return preg_replace('/\b('.implode('|',$stopwordRemoval).')\b/','',$search);
+	}
+
 
 }
