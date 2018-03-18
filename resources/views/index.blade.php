@@ -10,44 +10,44 @@
         <p id="validasi_pencarian" style="color: red; font-style: italic;display: none ">Mohon Masukan Kata Kunci Pencarian</p>    
 
         <div class="checkbox">
-          <label>
-            <input type="checkbox" value="" name="abudaud" id="abudaud">
-            Abu Daud
-        </label>
-        <label>
-            <input type="checkbox" value="" name="bukhari" id="bukhari">
-            Bukhari
-        </label>
-        <label>
-            <input type="checkbox" value="" name="malik" id="malik">
-            Malik
-        </label>
-        <label>
-            <input type="checkbox" value="" name="ahmad" id="ahmad">
-            Ahmad
-        </label>
-    </div>
+            <label>
+                <input type="checkbox" value="" name="bukhari" id="bukhari">
+                Bukhari
+            </label>
+            <label>
+                <input type="checkbox" value="" name="abudaud" id="abudaud">
+                Abu Daud
+            </label>
+            <label>
+                <input type="checkbox" value="" name="malik" id="malik">
+                Malik
+            </label>
+            <label>
+                <input type="checkbox" value="" name="ahmad" id="ahmad">
+                Ahmad
+            </label>
+        </div>
 
-    <div class="input-group">
-      <span class="input-group-addon" id="sizing-addon2">
-        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-    </span>
-    <input type="text" class="form-control" placeholder="Search ..." aria-describedby="sizing-addon2" name="search" id="search">
-    <span class="input-group-btn">
-        <button class="btn btn-default" id="cariHadits" type="button">Search</button>
-    </span>
-</div>
-<br>
-<div class="table-responsive" id="tableHadits" style="display: none">
-   <table class="table table-bordered" id="table-hadits">
-    <thead>
-        <tr>
-            <th>No. Hadis</th>
-            <th>Isi Hadis</th>
-            <th>Tipe Hadis</th>
-        </tr>
-    </thead>
-</table>
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon2">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        </span>
+        <input type="text" class="form-control" placeholder="Search ..." aria-describedby="sizing-addon2" name="search" id="search">
+        <span class="input-group-btn">
+            <button class="btn btn-default" id="cariHadits" type="button">Search</button>
+        </span>
+    </div>
+    <br>
+    <div class="table-responsive" id="tableHadits" style="display: none">
+     <table class="table table-bordered" id="table-hadits">
+        <thead>
+            <tr>
+                <th>No. Hadis</th>
+                <th>Isi Hadis</th>
+                <th>Tipe Hadis</th>
+            </tr>
+        </thead>
+    </table>
 </div>
 
 
@@ -65,8 +65,8 @@
             var search = $("#search").val();
             if ($('#abudaud').is(":checked"))
             {
-               var abudaud = 1; 
-           }else{
+             var abudaud = 1; 
+         }else{
             var abudaud = 0;
         }
         if ($('#bukhari').is(":checked"))
