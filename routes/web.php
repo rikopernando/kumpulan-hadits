@@ -21,6 +21,7 @@ Route::get('/about', function () {
 	return view('about');
 });
 
+Route::get('/statistik', 'PencarianHaditsController@statistik');
 Route::get('/pencarian-hadits', 'PencarianHaditsController@pencarianHadits');
 
 Auth::routes();

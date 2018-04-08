@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\KumpulanHadits;
+use App\Statistik;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Html\Builder;
 use Yajra\Datatables\Datatables;
@@ -96,7 +97,6 @@ class PencarianHaditsController extends Controller
 				when Isi_Indonesia LIKE "%'.$keyword_keenam.'%" then 7
 				END'
 			);
-
 		}else if ($jumlah_kata == 2) {
 			
 			$keyword_pertama = $pisah_kata[0];
@@ -184,6 +184,7 @@ class PencarianHaditsController extends Controller
 			}else if ($kumpulan_hadits->tipe_hadits == 3) { 
 				return "Malik"; 
 			}else if ($kumpulan_hadits->tipe_hadits == 4) { 
+				return "Ahmad";
 			}
 		})->make(true);
 	}
@@ -306,5 +307,24 @@ class PencarianHaditsController extends Controller
 		return preg_replace('/\b('.implode('|',$stopwordRemoval).')\b/','',$search);
 	}
 
+	public function statistik(Request $request){
+
+		$ip = \Request::ip();
+		$tanggal_sekarang  = date('Y-m-d');
+
+		$cekStatistik = Statistik::where('ip',$ip)->where(DB::raw('DATE(created_at)'),$tanggal_sekarang)->count();
+		if ($cekStatistik == 0) {
+			Statistik::create(['ip'=>$ip,'hits'=>1]);
+		}
+
+		$totalPengunjung = Statistik::count();
+		$pengunjungHariIni = Statistik::where(DB::raw('DATE(created_at)'),$tanggal_sekarang)->groupBy('ip')->count();
+
+		$respons['pengunjungHariIni'] = $pengunjungHariIni;
+		$respons['totalPengunjung'] = $totalPengunjung;
+
+		return $respons;
+
+	}
 
 }
